@@ -1,0 +1,58 @@
+{
+    "name": "vegas/messenger-notification",
+    "description": "Unified Telegram and MAX notification channels for Laravel with direct and relay transports",
+    "keywords": [
+        "laravel",
+        "notifications",
+        "telegram",
+        "max",
+        "messenger"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vegas",
+            "email": "info@vegas-dev.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2.5 || ^8.0",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^7.0",
+        "illuminate/console": "^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/notifications": "^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/support": "^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "irazasyed/telegram-bot-sdk": "^3.9",
+        "vegas/laravel-notification-channel-max": "^1.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.4",
+        "orchestra/testbench": "^5.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
+        "phpunit/phpunit": "^8.5 || ^9.6 || ^10.5 || ^11.0 || ^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vegas\\MessengerNotification\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vegas\\MessengerNotification\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Vegas\\MessengerNotification\\MessengerServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
