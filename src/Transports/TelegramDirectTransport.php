@@ -6,6 +6,7 @@ use GuzzleHttp\Client as HttpClient;
 use Illuminate\Notifications\Notification;
 use RuntimeException;
 use Telegram\Bot\Api;
+use Telegram\Bot\FileUpload\InputFile;
 use Telegram\Bot\HttpClients\GuzzleHttpClient;
 use Telegram\Bot\Objects\BaseObject;
 use Vegas\MessengerNotification\Contracts\MessengerTransport;
@@ -37,7 +38,10 @@ class TelegramDirectTransport implements MessengerTransport
 		if ($message->hasDocument()) {
 			$message->assertReadableDocument();
 			$payload['caption'] = $message->content;
-			$payload['document'] = $message->documentPath;
+			$payload['document'] = InputFile::create(
+				$message->documentPath,
+				$message->documentFilename
+			);
 			$response = $this->api()->sendDocument($payload);
 
 			return $this->normalize($response);
