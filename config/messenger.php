@@ -3,14 +3,14 @@
 return [
 	'channels' => [
 		'telegram' => [
-			'driver' => env('TELEGRAM_NOTIFICATION_DRIVER', 'off'),
+			'driver' => env('TELEGRAM_NOTIFICATION_DRIVER', ''),
 			'token' => env('TELEGRAM_BOT_TOKEN'),
 			'chat_id' => env('TELEGRAM_CHANNEL_DEFAULT_ID'),
 			'base_url' => env('TELEGRAM_BOT_API_URL'),
 			'proxy' => env('TELEGRAM_PROXY', env('PROXY_SOCKS5')),
 		],
 		'max' => [
-			'driver' => env('MAX_NOTIFICATION_DRIVER', 'off'),
+			'driver' => env('MAX_NOTIFICATION_DRIVER', ''),
 			'token' => env('MAX_BOT_TOKEN'),
 			'chat_id' => env('MAX_CHANNEL_DEFAULT_ID'),
 			'base_url' => env('MAX_BOT_API_URL'),

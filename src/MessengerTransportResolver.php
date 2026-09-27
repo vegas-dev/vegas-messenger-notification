@@ -13,7 +13,7 @@ class MessengerTransportResolver
 {
 	public function resolve($channel)
 	{
-		$driver = config('messenger.channels.' . $channel . '.driver', 'off');
+		$driver = $this->driver($channel);
 
 		if ($driver === 'direct') {
 			$class = $channel === 'telegram' ? TelegramDirectTransport::class : MaxDirectTransport::class;
@@ -25,10 +25,20 @@ class MessengerTransportResolver
 			return app(VegasServicesTransport::class);
 		}
 
-		if ($driver === 'off') {
+		if ($this->isDisabled($channel)) {
 			return app(NullTransport::class);
 		}
 
 		throw new InvalidArgumentException('Unsupported ' . $channel . ' notification driver: ' . $driver);
+	}
+
+	public function driver($channel)
+	{
+		return trim((string) config('messenger.channels.' . $channel . '.driver', ''));
+	}
+
+	public function isDisabled($channel)
+	{
+		return in_array($this->driver($channel), ['', 'off'], true);
 	}
 }

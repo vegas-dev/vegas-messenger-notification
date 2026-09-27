@@ -18,7 +18,7 @@ class MessengerNotifier
 		$results = [];
 
 		foreach ($channels as $channel) {
-			if (config('messenger.channels.' . $channel . '.driver', 'off') === 'off') {
+			if (app(MessengerTransportResolver::class)->isDisabled($channel)) {
 				continue;
 			}
 

@@ -28,7 +28,7 @@ VEGAS_SERVICES_PROJECT=
 VEGAS_SERVICES_SIGNING_KEY=
 ```
 
-Supported drivers are `direct`, `vegas-services`, and `off`. If `VEGAS_SERVICES_SIGNING_KEY` is empty, a stable signing key is derived from the application's `APP_KEY`.
+Supported drivers are `direct`, `vegas-services`, and `off`. An empty driver also disables the channel and is the default. If `VEGAS_SERVICES_SIGNING_KEY` is empty, a stable signing key is derived from the application's `APP_KEY`.
 
 ## Laravel notifications
 

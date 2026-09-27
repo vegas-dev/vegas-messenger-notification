@@ -5,13 +5,14 @@ namespace Vegas\MessengerNotification\Console;
 use Illuminate\Console\Command;
 use Vegas\MessengerNotification\Messages\MessengerMessage;
 use Vegas\MessengerNotification\MessengerNotifier;
+use Vegas\MessengerNotification\MessengerTransportResolver;
 
 class TestConnectionCommand extends Command
 {
 	protected $signature = 'messenger:test {channel=all : telegram, max or all}';
 	protected $description = 'Send a test notification to Telegram and/or MAX';
 
-	public function handle(MessengerNotifier $notifier)
+	public function handle(MessengerNotifier $notifier, MessengerTransportResolver $transports)
 	{
 		$channel = strtolower((string) $this->argument('channel'));
 
@@ -29,7 +30,7 @@ class TestConnectionCommand extends Command
 		]))->idempotencyKey('connection-test:' . str_replace('.', '', uniqid('', true)));
 
 		foreach ($channels as $currentChannel) {
-			if (config('messenger.channels.' . $currentChannel . '.driver', 'off') === 'off') {
+			if ($transports->isDisabled($currentChannel)) {
 				$this->warn(strtoupper($currentChannel) . ': channel is disabled.');
 				continue;
 			}
