@@ -3,6 +3,7 @@
 return [
 	'channels' => [
 		'telegram' => [
+			'link_preview' => null,
 			'driver' => env('TELEGRAM_NOTIFICATION_DRIVER', ''),
 			'token' => env('TELEGRAM_BOT_TOKEN'),
 			'chat_id' => env('TELEGRAM_CHANNEL_DEFAULT_ID'),
@@ -10,6 +11,7 @@ return [
 			'proxy' => env('TELEGRAM_PROXY', env('PROXY_SOCKS5')),
 		],
 		'max' => [
+			'link_preview' => null,
 			'driver' => env('MAX_NOTIFICATION_DRIVER', ''),
 			'token' => env('MAX_BOT_TOKEN'),
 			'chat_id' => env('MAX_CHANNEL_DEFAULT_ID'),

@@ -8,7 +8,6 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Notifications\Notification;
-use JsonException;
 use RuntimeException;
 use Vegas\MessengerNotification\Contracts\MessengerTransport;
 use Vegas\MessengerNotification\Messages\MessengerMessage;
@@ -17,9 +16,10 @@ use Vegas\MessengerNotification\MessengerSignature;
 class VegasServicesTransport implements MessengerTransport
 {
 	private $signatures;
+
 	private $http;
 
-	public function __construct(MessengerSignature $signatures, ClientInterface $http = null)
+	public function __construct(MessengerSignature $signatures, ?ClientInterface $http = null)
 	{
 		$this->signatures = $signatures;
 		$this->http = $http;
@@ -40,12 +40,12 @@ class VegasServicesTransport implements MessengerTransport
 
 		$payload = [
 			'channel' => $channel,
-			'idempotency_key' => $message->idempotencyKey . ':' . $channel,
-			'message' => $message->toArray(),
+			'idempotency_key' => $message->idempotencyKey.':'.$channel,
+			'message' => $message->toArrayForChannel($channel),
 		];
 		$body = $this->encode($payload);
 		$timestamp = (string) time();
-		$response = $this->request($url . '/api/v1/notifications', [
+		$response = $this->request($url.'/api/v1/notifications', [
 			'headers' => [
 				'X-Vegas-Project' => $project,
 				'X-Vegas-Timestamp' => $timestamp,
@@ -71,7 +71,7 @@ class VegasServicesTransport implements MessengerTransport
 			try {
 				return $this->client()->request('POST', $url, $options);
 			} catch (GuzzleException $exception) {
-				if ($attempt >= 3 || !$this->retryable($exception)) {
+				if ($attempt >= 3 || ! $this->retryable($exception)) {
 					throw $exception;
 				}
 
@@ -115,7 +115,7 @@ class VegasServicesTransport implements MessengerTransport
 		$body = json_encode($payload, $options);
 
 		if ($body === false) {
-			throw new RuntimeException('Unable to encode messenger payload: ' . json_last_error_msg());
+			throw new RuntimeException('Unable to encode messenger payload: '.json_last_error_msg());
 		}
 
 		return $body;

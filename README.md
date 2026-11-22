@@ -50,6 +50,19 @@ public function toMessenger($notifiable)
 }
 ```
 
+## Link previews
+
+Each notification can override link previews for both Telegram and MAX:
+
+```php
+return MessengerMessage::create($text)
+    ->linkPreview(false); // true allows previews; null restores the channel default
+```
+
+Set `channels.max.link_preview` or `channels.telegram.link_preview` in `config/messenger.php` to `true`, `false`, or `null`. The message setting takes priority over the channel default. A `null` default preserves the messenger's standard behavior. Existing notifications keep their behavior until a setting is supplied.
+
+Direct transports map the choice to each messenger API. The relay sends the resolved boolean as `message.disable_link_preview`; an omitted field preserves the relay's existing behavior. Vegas Services must support this field before clients enable it. Telegram document captions do not support link preview options. MAX applies this option to new messages, not edits; previews already present in an existing message are not removed by an edit.
+
 ## Documents
 
 ```php

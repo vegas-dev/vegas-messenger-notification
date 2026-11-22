@@ -32,4 +32,16 @@ class MessengerMessageTest extends TestCase
 		$this->assertSame('report.xls', $data['document']['filename']);
 		$this->assertSame(base64_encode('document-body'), $data['document']['content_base64']);
 	}
+
+	public function test_it_serializes_only_explicit_preview_choices(): void
+	{
+		config(['messenger.channels.max.link_preview' => false]);
+		$message = MessengerMessage::create('https://example.com/page');
+
+		$this->assertArrayNotHasKey('disable_link_preview', $message->toArray());
+		$this->assertFalse($message->linkPreview(true)->toArray()['disable_link_preview']);
+		$this->assertTrue($message->linkPreview(false)->toArray()['disable_link_preview']);
+		$this->assertArrayNotHasKey('disable_link_preview', $message->linkPreview(null)->toArray());
+		$this->assertTrue($message->toArrayForChannel('max')['disable_link_preview']);
+	}
 }

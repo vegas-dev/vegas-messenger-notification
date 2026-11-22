@@ -7,12 +7,21 @@ use RuntimeException;
 class MessengerMessage
 {
 	public $content;
+
 	public $format = 'markdown';
+
 	public $notify = true;
+
+	public $linkPreview;
+
 	public $idempotencyKey;
+
 	public $buttons = [];
+
 	public $documentPath;
+
 	public $documentFilename;
+
 	public $documentMime;
 
 	public function __construct($content = '')
@@ -44,6 +53,36 @@ class MessengerMessage
 		$this->notify = (bool) $notify;
 
 		return $this;
+	}
+
+	public function linkPreview(?bool $enabled): self
+	{
+		$this->linkPreview = $enabled;
+
+		return $this;
+	}
+
+	public function resolveLinkPreview(string $channel): ?bool
+	{
+		if ($this->linkPreview !== null) {
+			return $this->linkPreview;
+		}
+
+		$default = config('messenger.channels.'.$channel.'.link_preview');
+
+		return $default === null ? null : (bool) $default;
+	}
+
+	public function toArrayForChannel(string $channel): array
+	{
+		$data = $this->toArray();
+		$linkPreview = $this->resolveLinkPreview($channel);
+
+		if ($linkPreview !== null) {
+			$data['disable_link_preview'] = ! $linkPreview;
+		}
+
+		return $data;
 	}
 
 	public function idempotencyKey($key)
@@ -87,6 +126,10 @@ class MessengerMessage
 			'buttons' => $this->buttons,
 		];
 
+		if ($this->linkPreview !== null) {
+			$data['disable_link_preview'] = ! $this->linkPreview;
+		}
+
 		if ($this->hasDocument()) {
 			$this->assertReadableDocument();
 			$contents = file_get_contents($this->documentPath);
@@ -107,8 +150,8 @@ class MessengerMessage
 
 	public function assertReadableDocument()
 	{
-		if (!$this->hasDocument() || !is_file($this->documentPath) || !is_readable($this->documentPath)) {
-			throw new RuntimeException('Messenger document does not exist or is not readable: ' . $this->documentPath);
+		if (! $this->hasDocument() || ! is_file($this->documentPath) || ! is_readable($this->documentPath)) {
+			throw new RuntimeException('Messenger document does not exist or is not readable: '.$this->documentPath);
 		}
 	}
 

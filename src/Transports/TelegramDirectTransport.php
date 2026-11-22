@@ -19,14 +19,14 @@ class TelegramDirectTransport implements MessengerTransport
 	{
 		$chatId = config('messenger.channels.telegram.chat_id');
 
-		if (!$chatId) {
+		if (! $chatId) {
 			return null;
 		}
 
 		$payload = [
 			'chat_id' => $chatId,
 			'parse_mode' => $message->format === 'markdown' ? 'Markdown' : null,
-			'disable_notification' => !$message->notify,
+			'disable_notification' => ! $message->notify,
 		];
 
 		if ($message->buttons) {
@@ -45,6 +45,12 @@ class TelegramDirectTransport implements MessengerTransport
 			$response = $this->api()->sendDocument($payload);
 
 			return $this->normalize($response);
+		}
+
+		$linkPreview = $message->resolveLinkPreview('telegram');
+
+		if ($linkPreview !== null) {
+			$payload['disable_web_page_preview'] = ! $linkPreview;
 		}
 
 		$payload['text'] = $message->content;
@@ -67,11 +73,11 @@ class TelegramDirectTransport implements MessengerTransport
 		return $this->normalize($response);
 	}
 
-	private function api()
+	protected function api(): Api
 	{
 		$token = config('messenger.channels.telegram.token');
 
-		if (!$token) {
+		if (! $token) {
 			throw new RuntimeException('TELEGRAM_BOT_TOKEN is not configured.');
 		}
 

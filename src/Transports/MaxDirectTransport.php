@@ -14,7 +14,7 @@ class MaxDirectTransport implements MessengerTransport
 	{
 		$chatId = config('messenger.channels.max.chat_id');
 
-		if (!$chatId) {
+		if (! $chatId) {
 			return null;
 		}
 
@@ -22,6 +22,12 @@ class MaxDirectTransport implements MessengerTransport
 			'format' => $message->format,
 			'notify' => $message->notify,
 		];
+
+		$linkPreview = $message->resolveLinkPreview('max');
+
+		if ($linkPreview !== null) {
+			$payload['disable_link_preview'] = ! $linkPreview;
+		}
 
 		if ($message->buttons) {
 			$payload['attachments'] = [[
@@ -42,7 +48,7 @@ class MaxDirectTransport implements MessengerTransport
 			);
 		}
 
-		$messageId = !$message->hasDocument() && method_exists($notifiable, 'jd')
+		$messageId = ! $message->hasDocument() && method_exists($notifiable, 'jd')
 			? $notifiable->jd('max.message_id')
 			: null;
 
@@ -52,7 +58,7 @@ class MaxDirectTransport implements MessengerTransport
 
 		$response = $client->sendMessage($message->content, $chatId, $payload);
 
-		if ($response && !$message->hasDocument() && method_exists($notifiable, 'jd')) {
+		if ($response && ! $message->hasDocument() && method_exists($notifiable, 'jd')) {
 			$savedMessageId = isset($response['message_id'])
 				? $response['message_id']
 				: (isset($response['id']) ? $response['id'] : null);
@@ -66,11 +72,11 @@ class MaxDirectTransport implements MessengerTransport
 		return $response;
 	}
 
-	private function client()
+	protected function client(): MaxBotClient
 	{
 		$token = config('messenger.channels.max.token');
 
-		if (!$token) {
+		if (! $token) {
 			throw new RuntimeException('MAX_BOT_TOKEN is not configured.');
 		}
 
